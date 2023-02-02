@@ -18,40 +18,54 @@
         <h1 class="title">Tic Tac Toe</h1>
     </header>
 
-    <main class="main">
+    <div id="settings-vs" class="settings-container">
+        <p class="settings-text">Player 1</p>
+        <p class="settings-text">vs</p>
 
-        <div class="settings-container">
-            <p class="settings-text">Player 1</p>
-            <p class="settings-text">vs</p>
-    
-            <div class="button-container">
-                <button type="button">Player 2</button>
-                <button type="button">
-                    <span class="material-symbols-outlined">smart_toy</span>
-                    Bot</button>
-            </div>
+        <div class="button-container">
+            <button id="btn-player2" type="button">Player 2</button>
+            <button id="btn-bot" type="button">
+                <span class="material-symbols-outlined">smart_toy</span>
+                Bot</button>
         </div>
-    
-    
-        <div class="board hidden">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    
-        <button type="reset" class="hidden">Restart</button>
-    </main>
-
-    <div class="hidden">
-        <h1>Player x wins!</h1>
-        <button type="button">Close</button>
     </div>
+
+    <div id="settings-symbol" class="settings-container hidden">
+        <p class="settings-text">Player 1:</p>
+
+        <div class="button-container">
+            <button id="btn-x" type="button">X</button>
+            <button id="btn-o" type="button">O</button>
+        </div>
+    </div>
+
+    <main class="main hidden" id="board-container">
+        
+        <div class="players">
+            <p>X -> Player 1</p>
+            <p>O -> Player 2</p>
+        </div>
+
+        <div class="result hidden">
+            <p>Player x wins!</p>
+            <button type="button" class="main-button">Close</button>
+        </div>
+
+        <div class="board">
+            <div>X</div>
+            <div>O</div>
+            <div>X</div>
+            <div>O</div>
+            <div>X</div>
+            <div>O</div>
+            <div>X</div>
+            <div>O</div>
+            <div>X</div>
+        </div>
+
+        <button type="reset" class="main-button reset-button">Restart</button>
+
+    </main>
     
 </body>
 </html>

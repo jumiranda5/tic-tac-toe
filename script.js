@@ -14,6 +14,7 @@ const gameBoard = (() => {
     let player1;
     let player2;
     let moveCount = 0;
+    let isGameOver = false;
 
     const setPlayersNames = (name1, name2) => { 
         player1Name = name1;
@@ -56,6 +57,9 @@ const gameBoard = (() => {
         let currentPlayer;
         if (player1.symbol === symbol.toUpperCase()) currentPlayer = player1;
         else currentPlayer = player2;
+
+        // If one of the conditions bellow are true, the game is over
+        isGameOver = true; 
         
         // Horizontal
         if (board[0] !== "" && board[0] === board[1] && board[1] === board[2]) currentPlayer.setCol([0, 1, 2]);
@@ -71,11 +75,18 @@ const gameBoard = (() => {
         else if (board[0] !== "" && board[0] === board[4] && board[4] === board[8]) currentPlayer.setCol([0, 4, 8]);
         else if (board[6] !== "" && board[6] === board[4] && board[4] === board[2]) currentPlayer.setCol([6, 4, 2]);
 
+        // Game is not over
+        else isGameOver = false;
+
         if (moveCount === 9) return "match";
         else return currentPlayer;
     }
 
-    return { setPlayersNames, setPlayers, isPositionAvailable, addMove };
+    const getIsGameOver = () => {
+        return isGameOver;
+    }
+
+    return { setPlayersNames, setPlayers, isPositionAvailable, addMove, getIsGameOver };
 
 })();
 
@@ -122,14 +133,32 @@ btnO.addEventListener("click", () => {
 
 for (let i = 0; i < uiBoard.length; i++) {
     let div = uiBoard[i];
-    let endGame = false;
+    
+    div.addEventListener("mouseenter", (e) => {
+        const isEmpty = gameBoard.isPositionAvailable(i);
+        const isGameOver = gameBoard.getIsGameOver();
+        console.log(isGameOver);
+        if (isEmpty && !isGameOver) {
+            e.target.style.background = "#ededed";
+            e.target.style.cursor = "pointer";
+        }
+    });
+    
+    div.addEventListener("mouseleave", (e) => {
+        const isGameOver = gameBoard.getIsGameOver();
+        if (!isGameOver) {
+            e.target.style.background = "#ffffff";
+            e.target.style.cursor = "auto";
+        }
+    });
+
     div.addEventListener("click", () => {
         const isEmpty = gameBoard.isPositionAvailable(i);
-        if (isEmpty) {
+        const isGameOver = gameBoard.getIsGameOver();
+        if (isEmpty && !isGameOver) {
             let result = gameBoard.addMove(i, div);
             if (result === "match") {
                 console.log("End game. It's a match!");
-                endGame = true;
             }
             else if (result.getCol() !== null) {
                 console.log(result.getCol());
@@ -137,24 +166,10 @@ for (let i = 0; i < uiBoard.length; i++) {
                 uiBoard[col[0]].style.background = "#4cff82";
                 uiBoard[col[1]].style.background = "#4cff82";
                 uiBoard[col[2]].style.background = "#4cff82";
-                endGame = true;
             }
             else {
                 console.log("keep playing...");
             }
         }
     });
-    div.addEventListener("mouseenter", (e) => {
-        const isEmpty = gameBoard.isPositionAvailable(i);
-        if (isEmpty && !endGame) {
-            e.target.style.background = "#ededed";
-            e.target.style.cursor = "pointer";
-        }
-    })
-    div.addEventListener("mouseleave", (e) => {
-        if (!endGame) {
-            e.target.style.background = "#ffffff";
-            e.target.style.cursor = "auto";
-        }
-    })
 }

@@ -1,7 +1,10 @@
 const Player = (name, symbol) => {
     let isBot = false;
+    let col = null;
     if (name.toLowerCase() === "bot") isBot = true;
-    return {name, symbol, isBot};
+    const setCol = (indexes) => { col = indexes };
+    const getCol = () => { return col };
+    return {name, symbol, isBot, setCol, getCol};
 }
 
 const gameBoard = (() => {
@@ -18,8 +21,8 @@ const gameBoard = (() => {
     };
 
     const setPlayers = (symbol1, symbol2) => {
-        player1 = Player(player1Name, symbol1);
-        player2 = Player(player2Name, symbol2);
+        player1 = Player(player1Name, symbol1.toUpperCase());
+        player2 = Player(player2Name, symbol2.toUpperCase());
         document.getElementById("player1").textContent = `${player1Name}: ${symbol1}`;
         document.getElementById("player2").textContent = `${player2Name}: ${symbol2}`;
     };
@@ -46,9 +49,31 @@ const gameBoard = (() => {
 
         board[pos] = symbol;
 
-        // check result
-        // if move count is 9 => end game
+        return checkWinner(symbol);
     };
+
+    const checkWinner = (symbol) => {
+        let currentPlayer;
+        if (player1.symbol === symbol.toUpperCase()) currentPlayer = player1;
+        else currentPlayer = player2;
+        
+        // Horizontal
+        if (board[0] !== "" && board[0] === board[1] && board[1] === board[2]) currentPlayer.setCol([0, 1, 2]);
+        else if (board[3] !== "" && board[3] === board[4] && board[4] === board[5]) currentPlayer.setCol([3, 4, 5]);
+        else if (board[6] !== "" && board[6] === board[7] && board[7] === board[8])  currentPlayer.setCol([5, 7, 8]);
+
+        // Vertical
+        else if (board[0] !== "" && board[0] === board[3] && board[3] === board[6]) currentPlayer.setCol([0, 3, 6]);
+        else if (board[1] !== "" && board[1] === board[4] && board[4] === board[7]) currentPlayer.setCol([1, 4, 7]);
+        else if (board[2] !== "" && board[2] === board[5] && board[5] === board[8]) currentPlayer.setCol([2, 5, 8]);
+
+        // Diagonal
+        else if (board[0] !== "" && board[0] === board[4] && board[4] === board[8]) currentPlayer.setCol([0, 4, 8]);
+        else if (board[6] !== "" && board[6] === board[4] && board[4] === board[2]) currentPlayer.setCol([6, 4, 2]);
+
+        if (moveCount === 9) return "match";
+        else return currentPlayer;
+    }
 
     return { setPlayersNames, setPlayers, isPositionAvailable, addMove };
 
@@ -97,21 +122,39 @@ btnO.addEventListener("click", () => {
 
 for (let i = 0; i < uiBoard.length; i++) {
     let div = uiBoard[i];
+    let endGame = false;
     div.addEventListener("click", () => {
         const isEmpty = gameBoard.isPositionAvailable(i);
         if (isEmpty) {
-            gameBoard.addMove(i, div);
+            let result = gameBoard.addMove(i, div);
+            if (result === "match") {
+                console.log("End game. It's a match!");
+                endGame = true;
+            }
+            else if (result.getCol() !== null) {
+                console.log(result.getCol());
+                let col = result.getCol();
+                uiBoard[col[0]].style.background = "#4cff82";
+                uiBoard[col[1]].style.background = "#4cff82";
+                uiBoard[col[2]].style.background = "#4cff82";
+                endGame = true;
+            }
+            else {
+                console.log("keep playing...");
+            }
         }
     });
     div.addEventListener("mouseenter", (e) => {
         const isEmpty = gameBoard.isPositionAvailable(i);
-        if (isEmpty) {
+        if (isEmpty && !endGame) {
             e.target.style.background = "#ededed";
             e.target.style.cursor = "pointer";
         }
     })
     div.addEventListener("mouseleave", (e) => {
-        e.target.style.background = "#ffffff";
-        e.target.style.cursor = "auto";
+        if (!endGame) {
+            e.target.style.background = "#ffffff";
+            e.target.style.cursor = "auto";
+        }
     })
 }

@@ -86,7 +86,22 @@ const gameBoard = (() => {
         return isGameOver;
     }
 
-    return { setPlayersNames, setPlayers, isPositionAvailable, addMove, getIsGameOver };
+    const reset = () => {
+        moveCount = 0;
+        isGameOver = false;
+        for (let i = 0; i < board.length; i++) {
+            board[i] = "";
+        }
+    }
+
+    return { 
+        setPlayersNames, 
+        setPlayers, 
+        isPositionAvailable, 
+        addMove, 
+        getIsGameOver,
+        reset
+    };
 
 })();
 
@@ -103,6 +118,7 @@ const btnO = document.getElementById("btn-o");
 const uiBoard = document.getElementById("board").children;
 const playersContainer = document.getElementById("players");
 const resultContainer = document.getElementById("result");
+const btnReset = document.getElementById("btn-reset");
 
 btnPlayer2.addEventListener("click", () => {
     console.log("Play against Player 2");
@@ -132,13 +148,18 @@ btnO.addEventListener("click", () => {
     gameBoard.setPlayers("O", "X");
 });
 
+btnReset.addEventListener("click", () => { 
+    gameBoard.reset();
+    // todo: reset ui; 
+});
+
 
 for (let i = 0; i < uiBoard.length; i++) {
     let div = uiBoard[i];
     
-    div.addEventListener("mouseenter", (e) => { setHover(true) });
+    div.addEventListener("mouseenter", (e) => { setHover(true, i, e.target) });
     
-    div.addEventListener("mouseleave", (e) => { setHover(false) });
+    div.addEventListener("mouseleave", (e) => { setHover(false, i, e.target) });
 
     div.addEventListener("click", () => {
         const isEmpty = gameBoard.isPositionAvailable(i);
@@ -165,21 +186,21 @@ function gameOver(msg) {
     resultContainer.children[0].textContent = msg;
 }
 
-function setHover(isMouseEnter) {
+function setHover(isMouseEnter, index, div) {
 
-    const isEmpty = gameBoard.isPositionAvailable(i);
+    const isEmpty = gameBoard.isPositionAvailable(index);
     const isGameOver = gameBoard.getIsGameOver();
 
     if (isMouseEnter) {
         if (isEmpty && !isGameOver) {
-            e.target.style.background = "#ededed";
-            e.target.style.cursor = "pointer";
+            div.style.background = "#ededed";
+            div.style.cursor = "pointer";
         }
     }
     else {
         if (!isGameOver) {
-            e.target.style.background = "#ffffff";
-            e.target.style.cursor = "auto";
+            div.style.background = "#ffffff";
+            div.style.cursor = "auto";
         }
     }
 

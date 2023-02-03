@@ -89,6 +89,8 @@ const gameBoard = (() => {
     const reset = () => {
         moveCount = 0;
         isGameOver = false;
+        player1.setCol(null);
+        player2.setCol(null);
         for (let i = 0; i < board.length; i++) {
             board[i] = "";
         }
@@ -150,9 +152,13 @@ btnO.addEventListener("click", () => {
 
 btnReset.addEventListener("click", () => { 
     gameBoard.reset();
-    // todo: reset ui; 
+    playersContainer.classList.remove("hidden");
+    resultContainer.classList.add("hidden");
+    for (let i = 0; i < uiBoard.length; i++) {
+        uiBoard[i].textContent = "";
+        uiBoard[i].style.background = "#ffffff";
+    }
 });
-
 
 for (let i = 0; i < uiBoard.length; i++) {
     let div = uiBoard[i];
@@ -166,6 +172,7 @@ for (let i = 0; i < uiBoard.length; i++) {
         const isGameOver = gameBoard.getIsGameOver();
         if (isEmpty && !isGameOver) {
             let result = gameBoard.addMove(i, div);
+            console.log(result.getCol());
             if (result === "match") {
                 gameOver("It's a match!");
             }

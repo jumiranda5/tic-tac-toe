@@ -101,6 +101,8 @@ const btnBot = document.getElementById("btn-bot");
 const btnX = document.getElementById("btn-x");
 const btnO = document.getElementById("btn-o");
 const uiBoard = document.getElementById("board").children;
+const playersContainer = document.getElementById("players");
+const resultContainer = document.getElementById("result");
 
 btnPlayer2.addEventListener("click", () => {
     console.log("Play against Player 2");
@@ -134,23 +136,9 @@ btnO.addEventListener("click", () => {
 for (let i = 0; i < uiBoard.length; i++) {
     let div = uiBoard[i];
     
-    div.addEventListener("mouseenter", (e) => {
-        const isEmpty = gameBoard.isPositionAvailable(i);
-        const isGameOver = gameBoard.getIsGameOver();
-        console.log(isGameOver);
-        if (isEmpty && !isGameOver) {
-            e.target.style.background = "#ededed";
-            e.target.style.cursor = "pointer";
-        }
-    });
+    div.addEventListener("mouseenter", (e) => { setHover(true) });
     
-    div.addEventListener("mouseleave", (e) => {
-        const isGameOver = gameBoard.getIsGameOver();
-        if (!isGameOver) {
-            e.target.style.background = "#ffffff";
-            e.target.style.cursor = "auto";
-        }
-    });
+    div.addEventListener("mouseleave", (e) => { setHover(false) });
 
     div.addEventListener("click", () => {
         const isEmpty = gameBoard.isPositionAvailable(i);
@@ -158,18 +146,41 @@ for (let i = 0; i < uiBoard.length; i++) {
         if (isEmpty && !isGameOver) {
             let result = gameBoard.addMove(i, div);
             if (result === "match") {
-                console.log("End game. It's a match!");
+                gameOver("It's a match!");
             }
             else if (result.getCol() !== null) {
-                console.log(result.getCol());
                 let col = result.getCol();
                 uiBoard[col[0]].style.background = "#4cff82";
                 uiBoard[col[1]].style.background = "#4cff82";
                 uiBoard[col[2]].style.background = "#4cff82";
-            }
-            else {
-                console.log("keep playing...");
+                gameOver(`${result.name} wins!`);
             }
         }
     });
+}
+
+function gameOver(msg) {
+    playersContainer.classList.add("hidden");
+    resultContainer.classList.remove("hidden");
+    resultContainer.children[0].textContent = msg;
+}
+
+function setHover(isMouseEnter) {
+
+    const isEmpty = gameBoard.isPositionAvailable(i);
+    const isGameOver = gameBoard.getIsGameOver();
+
+    if (isMouseEnter) {
+        if (isEmpty && !isGameOver) {
+            e.target.style.background = "#ededed";
+            e.target.style.cursor = "pointer";
+        }
+    }
+    else {
+        if (!isGameOver) {
+            e.target.style.background = "#ffffff";
+            e.target.style.cursor = "auto";
+        }
+    }
+
 }

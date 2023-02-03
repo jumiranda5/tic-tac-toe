@@ -1,3 +1,6 @@
+// todo: close game
+// todo: bot
+
 const Player = (name, symbol) => {
     let isBot = false;
     let col = null;
@@ -64,7 +67,7 @@ const gameBoard = (() => {
         // Horizontal
         if (board[0] !== "" && board[0] === board[1] && board[1] === board[2]) currentPlayer.setCol([0, 1, 2]);
         else if (board[3] !== "" && board[3] === board[4] && board[4] === board[5]) currentPlayer.setCol([3, 4, 5]);
-        else if (board[6] !== "" && board[6] === board[7] && board[7] === board[8])  currentPlayer.setCol([5, 7, 8]);
+        else if (board[6] !== "" && board[6] === board[7] && board[7] === board[8])  currentPlayer.setCol([6, 7, 8]);
 
         // Vertical
         else if (board[0] !== "" && board[0] === board[3] && board[3] === board[6]) currentPlayer.setCol([0, 3, 6]);
@@ -172,7 +175,6 @@ for (let i = 0; i < uiBoard.length; i++) {
         const isGameOver = gameBoard.getIsGameOver();
         if (isEmpty && !isGameOver) {
             let result = gameBoard.addMove(i, div);
-            console.log(result.getCol());
             if (result === "match") {
                 gameOver("It's a match!");
             }

@@ -20,8 +20,8 @@ const gameBoard = (() => {
     const setPlayers = (symbol1, symbol2) => {
         player1 = Player(player1Name, symbol1);
         player2 = Player(player2Name, symbol2);
-        console.log(player1);
-        console.log(player2);
+        document.getElementById("player1").textContent = `${player1Name}: ${symbol1}`;
+        document.getElementById("player2").textContent = `${player2Name}: ${symbol2}`;
     };
 
     const board = [
@@ -84,14 +84,14 @@ btnX.addEventListener("click", () => {
     console.log("Player 1 is X");
     settingsSymbol.classList.add("hidden");
     boardContainer.classList.remove("hidden");
-    gameBoard.setPlayers("x", "o");
+    gameBoard.setPlayers("X", "O");
 });
 
 btnO.addEventListener("click", () => {
     console.log("Player 1 is O");
     settingsSymbol.classList.add("hidden");
     boardContainer.classList.remove("hidden");
-    gameBoard.setPlayers("o", "x");
+    gameBoard.setPlayers("O", "X");
 });
 
 

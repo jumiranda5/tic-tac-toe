@@ -20,7 +20,7 @@ btnPlayer2.addEventListener("click", () => {
 
 btnBot.addEventListener("click", () => {
     console.log("Play against bot");
-    replaceViews(settingsVs, settingsSymbol);
+    replaceViews(settingsSymbol, settingsVs);
     gameBoard.setPlayersNames("Player 1", "Bot");
 });
 
@@ -34,6 +34,7 @@ btnO.addEventListener("click", () => {
     console.log("Player 1 is O");
     replaceViews(boardContainer, settingsSymbol);
     gameBoard.setPlayersSymbols("O", "X");
+    gameBoard.setInitialBotMove();
 });
 
 const replaceViews = (toShow, toHide) => {
@@ -76,7 +77,10 @@ for (let i = 0; i < uiBoard.length; i++) {
                 uiBoard[col[1]].style.background = "#4cff82";
                 uiBoard[col[2]].style.background = "#4cff82";
                 replaceViews(resultContainer, playersContainer);
-                resultContainer.children[0].textContent = `${currentPlayer.getName()} wins!`;
+
+                // Get last player in case the game is against bot
+                const lastPlayer = gameBoard.getLastPlayer();
+                resultContainer.children[0].textContent = `${lastPlayer.getName()} wins!`;
             }
             else if (gameBoard.getIsGameOver()) {
                 replaceViews(resultContainer, playersContainer);
@@ -183,20 +187,51 @@ const gameBoard = (() => {
         let firstPlayer = player1;
         let secondPlayer = player2;
 
-        if (player1.symbol === "O") {
+        if (player1.getSymbol() === "O") {
             firstPlayer = player2;
             secondPlayer = player1;
         }
 
+        console.log(`first player => ${firstPlayer.getName()}`);
+        console.log(`second player => ${secondPlayer.getName()}`);
+
+        console.log(`Move count = ${moveCount}`);
+
         if (moveCount === 0 || moveCount % 2 === 0) currentPlayer = firstPlayer;
         else currentPlayer = secondPlayer;
+
+        console.log(`Current player = ${currentPlayer.getName()}`);
 
         return currentPlayer;
     }
 
+    const getLastPlayer = () => {
+        let lastPlayer;
+        let firstPlayer = player1;
+        let secondPlayer = player2;
+
+        if (player1.getSymbol() === "O") {
+            firstPlayer = player2;
+            secondPlayer = player1;
+        }
+
+        if (moveCount % 2 === 0) lastPlayer = secondPlayer;
+        else lastPlayer = firstPlayer;
+
+        return lastPlayer;
+    }
+
+    // Bot
+
+    const botMove = () => {
+        let available = availablePositions();
+        const position = Math.floor(Math.random() * available.length);
+        return available[position];
+    }
+
     // board
 
-    const addMove = (player, position) => {
+    const move = (player, position) => {
         moveCount++;
 
         if (player === player1) player1.addMove(position);
@@ -211,6 +246,31 @@ const gameBoard = (() => {
         return col;
     }
 
+    const addMove = (player, position) => {
+        
+        const col = move(player, position);
+
+        if (col.length === 3) return col;
+
+        // if player 2 is bot, make bot move
+        else if (player === player1 && player2.getName().toLowerCase() === "bot") {
+            const botPosition = botMove();
+            uiBoard[botPosition].textContent = player2.getSymbol();
+            const botCol = move(player2, botPosition);
+            return botCol;
+        }
+
+        return col;
+        
+    }
+
+    const setInitialBotMove = () => {
+        // Init game if bot is X
+        const botPosition = botMove();
+        uiBoard[botPosition].textContent = player2.getSymbol();
+        move(player2, botPosition);
+    }
+
     const getIsGameOver = () => {
         return isGameOver;
     }
@@ -220,7 +280,7 @@ const gameBoard = (() => {
     const availablePositions = () => {
         let available = [];
         for (let i = 0; i < board.length; i++) {
-            if (board[1] === "") available.push(board[i]);
+            if (board[i] === "") available.push(i);
         }
         return available;
     }
@@ -246,7 +306,9 @@ const gameBoard = (() => {
         setPlayersNames,
         setPlayersSymbols,
         getCurrentPlayer,
+        getLastPlayer,
         addMove,
+        setInitialBotMove,
         availablePositions,
         isPositionAvailable,
         getIsGameOver,
@@ -254,3 +316,8 @@ const gameBoard = (() => {
     }
 
 })();
+
+// If first player - X - is bot => init game
+// if (gameBoard.getCurrentPlayer().getName().toLowerCase() === "bot") {
+
+// }

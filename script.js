@@ -1,198 +1,90 @@
-// todo: close game
-// todo: bot
-
-const Player = (name, symbol) => {
-    let isBot = false;
-    let col = null;
-    if (name.toLowerCase() === "bot") isBot = true;
-    const setCol = (indexes) => { col = indexes };
-    const getCol = () => { return col };
-    return {name, symbol, isBot, setCol, getCol};
-}
-
-const gameBoard = (() => {
-
-    let player1Name;
-    let player2Name;
-    let player1;
-    let player2;
-    let moveCount = 0;
-    let isGameOver = false;
-
-    const setPlayersNames = (name1, name2) => { 
-        player1Name = name1;
-        player2Name = name2;
-    };
-
-    const setPlayers = (symbol1, symbol2) => {
-        player1 = Player(player1Name, symbol1.toUpperCase());
-        player2 = Player(player2Name, symbol2.toUpperCase());
-        document.getElementById("player1").textContent = `${player1Name}: ${symbol1}`;
-        document.getElementById("player2").textContent = `${player2Name}: ${symbol2}`;
-    };
-
-    const board = [
-        "", "", "", 
-        "", "", "", 
-        "", "", ""
-    ];
-
-    const isPositionAvailable = (pos) => {
-        if (board[pos] === "") return true;
-        else return false; 
-    };
-
-    const addMove = (pos, uiNode) => {
-        let symbol;
-        if (moveCount === 0 || moveCount % 2 === 0) symbol = "X";
-        else symbol = "O";
-
-        uiNode.textContent = symbol;
-
-        moveCount++;
-
-        board[pos] = symbol;
-
-        return checkWinner(symbol);
-    };
-
-    const checkWinner = (symbol) => {
-        let currentPlayer;
-        if (player1.symbol === symbol.toUpperCase()) currentPlayer = player1;
-        else currentPlayer = player2;
-
-        // If one of the conditions bellow are true, the game is over
-        isGameOver = true; 
-        
-        // Horizontal
-        if (board[0] !== "" && board[0] === board[1] && board[1] === board[2]) currentPlayer.setCol([0, 1, 2]);
-        else if (board[3] !== "" && board[3] === board[4] && board[4] === board[5]) currentPlayer.setCol([3, 4, 5]);
-        else if (board[6] !== "" && board[6] === board[7] && board[7] === board[8])  currentPlayer.setCol([6, 7, 8]);
-
-        // Vertical
-        else if (board[0] !== "" && board[0] === board[3] && board[3] === board[6]) currentPlayer.setCol([0, 3, 6]);
-        else if (board[1] !== "" && board[1] === board[4] && board[4] === board[7]) currentPlayer.setCol([1, 4, 7]);
-        else if (board[2] !== "" && board[2] === board[5] && board[5] === board[8]) currentPlayer.setCol([2, 5, 8]);
-
-        // Diagonal
-        else if (board[0] !== "" && board[0] === board[4] && board[4] === board[8]) currentPlayer.setCol([0, 4, 8]);
-        else if (board[6] !== "" && board[6] === board[4] && board[4] === board[2]) currentPlayer.setCol([6, 4, 2]);
-
-        // Game is not over
-        else isGameOver = false;
-
-        if (moveCount === 9) return "match";
-        else return currentPlayer;
-    }
-
-    const getIsGameOver = () => {
-        return isGameOver;
-    }
-
-    const reset = () => {
-        moveCount = 0;
-        isGameOver = false;
-        player1.setCol(null);
-        player2.setCol(null);
-        for (let i = 0; i < board.length; i++) {
-            board[i] = "";
-        }
-    }
-
-    return { 
-        setPlayersNames, 
-        setPlayers, 
-        isPositionAvailable, 
-        addMove, 
-        getIsGameOver,
-        reset
-    };
-
-})();
-
-
-// UI
-
+// Containers
 const settingsVs = document.getElementById("settings-vs");
 const settingsSymbol = document.getElementById("settings-symbol");
 const boardContainer = document.getElementById("board-container");
+const playersContainer = document.getElementById("players");
+const resultContainer = document.getElementById("result");
+
+// buttons
 const btnPlayer2 = document.getElementById("btn-player2");
 const btnBot = document.getElementById("btn-bot");
 const btnX = document.getElementById("btn-x");
 const btnO = document.getElementById("btn-o");
-const uiBoard = document.getElementById("board").children;
-const playersContainer = document.getElementById("players");
-const resultContainer = document.getElementById("result");
 const btnReset = document.getElementById("btn-reset");
 
 btnPlayer2.addEventListener("click", () => {
     console.log("Play against Player 2");
-    settingsVs.classList.add("hidden");
-    settingsSymbol.classList.remove("hidden");
+    replaceViews(settingsSymbol, settingsVs);
     gameBoard.setPlayersNames("Player 1", "Player 2");
 });
 
 btnBot.addEventListener("click", () => {
     console.log("Play against bot");
-    settingsVs.classList.add("hidden");
-    settingsSymbol.classList.remove("hidden");
+    replaceViews(settingsVs, settingsSymbol);
     gameBoard.setPlayersNames("Player 1", "Bot");
 });
 
 btnX.addEventListener("click", () => {
     console.log("Player 1 is X");
-    settingsSymbol.classList.add("hidden");
-    boardContainer.classList.remove("hidden");
-    gameBoard.setPlayers("X", "O");
+    replaceViews(boardContainer, settingsSymbol);
+    gameBoard.setPlayersSymbols("X", "O");
 });
 
 btnO.addEventListener("click", () => {
     console.log("Player 1 is O");
-    settingsSymbol.classList.add("hidden");
-    boardContainer.classList.remove("hidden");
-    gameBoard.setPlayers("O", "X");
+    replaceViews(boardContainer, settingsSymbol);
+    gameBoard.setPlayersSymbols("O", "X");
 });
 
+const replaceViews = (toShow, toHide) => {
+    toHide.classList.add("hidden");
+    toShow.classList.remove("hidden");
+};
+
 btnReset.addEventListener("click", () => { 
-    gameBoard.reset();
-    playersContainer.classList.remove("hidden");
-    resultContainer.classList.add("hidden");
+    gameBoard.clearBoard();
+    replaceViews(playersContainer, resultContainer);
     for (let i = 0; i < uiBoard.length; i++) {
         uiBoard[i].textContent = "";
         uiBoard[i].style.background = "#ffffff";
     }
 });
 
-for (let i = 0; i < uiBoard.length; i++) {
-    let div = uiBoard[i];
-    
-    div.addEventListener("mouseenter", (e) => { setHover(true, i, e.target) });
-    
-    div.addEventListener("mouseleave", (e) => { setHover(false, i, e.target) });
 
-    div.addEventListener("click", () => {
+// UI board
+
+const uiBoard = document.getElementById("board").children;
+
+for (let i = 0; i < uiBoard.length; i++) {
+    
+    uiBoard[i].addEventListener("mouseenter", (e) => { setHover(true, i, e.target) });
+    
+    uiBoard[i].addEventListener("mouseleave", (e) => { setHover(false, i, e.target) });
+
+    uiBoard[i].addEventListener("click", () => {
         const isEmpty = gameBoard.isPositionAvailable(i);
         const isGameOver = gameBoard.getIsGameOver();
+        
         if (isEmpty && !isGameOver) {
-            let result = gameBoard.addMove(i, div);
-            if (result === "match") {
-                gameOver("It's a match!");
-            }
-            else if (result.getCol() !== null) {
-                let col = result.getCol();
+        
+            const currentPlayer = gameBoard.getCurrentPlayer();
+            uiBoard[i].textContent = currentPlayer.getSymbol();
+            const col = gameBoard.addMove(currentPlayer, i);
+        
+            if (col.length === 3) {
                 uiBoard[col[0]].style.background = "#4cff82";
                 uiBoard[col[1]].style.background = "#4cff82";
                 uiBoard[col[2]].style.background = "#4cff82";
-                gameOver(`${result.name} wins!`);
+                replaceViews(resultContainer, playersContainer);
+                resultContainer.children[0].textContent = `${currentPlayer.getName()} wins!`;
             }
+            else if (gameBoard.getIsGameOver()) {
+                replaceViews(resultContainer, playersContainer);
+                resultContainer.children[0].textContent = `It's a tie!`;
+            } 
+            
         }
     });
-}
-
-function gameOver(msg) {
-    playersContainer.classList.add("hidden");
-    resultContainer.classList.remove("hidden");
-    resultContainer.children[0].textContent = msg;
 }
 
 function setHover(isMouseEnter, index, div) {
@@ -214,3 +106,151 @@ function setHover(isMouseEnter, index, div) {
     }
 
 }
+
+
+// Objects
+
+const Player = () => {
+
+    let name;
+    let symbol;
+    let moves = [];
+
+    const setName = (playerName) => { name = playerName };
+
+    const setSymbol = (playerSymbol) => { symbol = playerSymbol };
+
+    const getName = () => { return name };
+
+    const getSymbol = () => { return symbol };
+    
+    const addMove = (pos) => { moves.push(pos) };
+
+    const checkMoves = () => {
+        const col1 = moves.includes(0) && moves.includes(1) && moves.includes(2);
+        const col2 = moves.includes(3) && moves.includes(4) && moves.includes(5);
+        const col3 = moves.includes(6) && moves.includes(7) && moves.includes(8);
+        const col4 = moves.includes(0) && moves.includes(3) && moves.includes(6);
+        const col5 = moves.includes(1) && moves.includes(4) && moves.includes(7);
+        const col6 = moves.includes(2) && moves.includes(5) && moves.includes(8);
+        const col7 = moves.includes(0) && moves.includes(4) && moves.includes(8);
+        const col8 = moves.includes(6) && moves.includes(4) && moves.includes(2);
+        
+        if (col1) return [0, 1, 2];
+        else if (col2) return [3, 4, 5]; 
+        else if (col3) return [6, 7, 8];
+        else if (col4) return [0, 3, 6];
+        else if (col5) return [1, 4, 7];
+        else if (col6) return [2, 5, 8];
+        else if (col7) return [0, 4, 8];
+        else if (col8) return [6, 4, 2];
+        else return [];
+    }
+
+    const resetMoves = () => { moves = [] };
+
+    return { setName, setSymbol, addMove, checkMoves, getSymbol, getName, resetMoves };
+
+};
+
+
+const gameBoard = (() => {
+
+    const player1 = Player();
+    const player2 = Player();
+    let moveCount = 0;
+    let isGameOver = false;
+    const board = [
+        "", "", "", 
+        "", "", "", 
+        "", "", ""
+    ];
+
+    // Players
+
+    const setPlayersNames = (name1, name2) => {
+        player1.setName(name1);
+        player2.setName(name2);
+    };
+
+    const setPlayersSymbols = (symbol1, symbol2) => {
+        player1.setSymbol(symbol1);
+        player2.setSymbol(symbol2);
+    };
+
+    const getCurrentPlayer = () => {
+        let currentPlayer;
+        let firstPlayer = player1;
+        let secondPlayer = player2;
+
+        if (player1.symbol === "O") {
+            firstPlayer = player2;
+            secondPlayer = player1;
+        }
+
+        if (moveCount === 0 || moveCount % 2 === 0) currentPlayer = firstPlayer;
+        else currentPlayer = secondPlayer;
+
+        return currentPlayer;
+    }
+
+    // board
+
+    const addMove = (player, position) => {
+        moveCount++;
+
+        if (player === player1) player1.addMove(position);
+        else player2.addMove(position);
+
+        board[position] = player.getSymbol();
+
+        const col = player.checkMoves();
+
+        if (col.length === 3 || moveCount > 8) isGameOver = true;
+
+        return col;
+    }
+
+    const getIsGameOver = () => {
+        return isGameOver;
+    }
+
+    // available positions
+
+    const availablePositions = () => {
+        let available = [];
+        for (let i = 0; i < board.length; i++) {
+            if (board[1] === "") available.push(board[i]);
+        }
+        return available;
+    }
+
+    const isPositionAvailable = (pos) => {
+        if (board[pos] === "") return true;
+        else return false; 
+    };
+
+    // Clear
+    
+    const clearBoard = () => {
+        moveCount = 0;
+        isGameOver = false;
+        player1.resetMoves();
+        player2.resetMoves();
+        for (let i = 0; i < board.length; i++) {
+            board[i] = "";
+        }
+    }
+
+    return {
+        setPlayersNames,
+        setPlayersSymbols,
+        getCurrentPlayer,
+        addMove,
+        availablePositions,
+        isPositionAvailable,
+        getIsGameOver,
+        clearBoard
+    }
+
+})();

@@ -1,9 +1,14 @@
+/* =======================================================
+                    DOM ELEMENTS
+========================================================== */
+
 // Containers
 const settingsVs = document.getElementById("settings-vs");
 const settingsSymbol = document.getElementById("settings-symbol");
 const boardContainer = document.getElementById("board-container");
 const playersContainer = document.getElementById("players");
 const resultContainer = document.getElementById("result");
+const uiBoard = document.getElementById("board").children;
 
 // buttons
 const btnPlayer2 = document.getElementById("btn-player2");
@@ -11,6 +16,11 @@ const btnBot = document.getElementById("btn-bot");
 const btnX = document.getElementById("btn-x");
 const btnO = document.getElementById("btn-o");
 const btnReset = document.getElementById("btn-reset");
+
+
+/* =======================================================
+                BUTTONS EVENT LISTENERS
+========================================================== */
 
 btnPlayer2.addEventListener("click", () => {
     replaceViews(settingsSymbol, settingsVs);
@@ -48,9 +58,9 @@ btnReset.addEventListener("click", () => {
 });
 
 
-// UI board
-
-const uiBoard = document.getElementById("board").children;
+/* =======================================================
+                GAME BOARD EVENT LISTENERS
+========================================================== */
 
 for (let i = 0; i < uiBoard.length; i++) {
     
@@ -59,15 +69,19 @@ for (let i = 0; i < uiBoard.length; i++) {
     uiBoard[i].addEventListener("mouseleave", (e) => { setHover(false, i, e.target) });
 
     uiBoard[i].addEventListener("click", () => {
+
+        // Check if the position is empty and the game is not over
         const isEmpty = gameBoard.isPositionAvailable(i);
         const isGameOver = gameBoard.getIsGameOver();
         
         if (isEmpty && !isGameOver) {
         
+            // Add move and check if player won
             const currentPlayer = gameBoard.getCurrentPlayer();
             uiBoard[i].textContent = currentPlayer.getSymbol();
             const col = gameBoard.addMove(currentPlayer, i);
         
+            // if player won, change column to green
             if (col.length === 3) {
                 uiBoard[col[0]].style.background = "#4cff82";
                 uiBoard[col[1]].style.background = "#4cff82";
@@ -89,6 +103,8 @@ for (let i = 0; i < uiBoard.length; i++) {
 
 function setHover(isMouseEnter, index, div) {
 
+    // Change background color an pointer if position is available
+
     const isEmpty = gameBoard.isPositionAvailable(index);
     const isGameOver = gameBoard.getIsGameOver();
 
@@ -108,7 +124,9 @@ function setHover(isMouseEnter, index, div) {
 }
 
 
-// Objects
+/* =======================================================
+                   OBJECTS AND FUNCTIONS
+========================================================== */
 
 const Player = () => {
 

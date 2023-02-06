@@ -48,13 +48,13 @@ const replaceViews = (toShow, toHide) => {
     toShow.classList.remove("hidden");
 };
 
-btnReset.addEventListener("click", () => { 
-    gameBoard.clearBoard();
+btnReset.addEventListener("click", () => {
     replaceViews(playersContainer, resultContainer);
     for (let i = 0; i < uiBoard.length; i++) {
         uiBoard[i].textContent = "";
         uiBoard[i].style.background = "#ffffff";
-    }
+    } 
+    gameBoard.clearBoard();
 });
 
 
@@ -381,6 +381,10 @@ const gameBoard = (() => {
         player2.resetMoves();
         for (let i = 0; i < board.length; i++) {
             board[i] = "";
+        }
+        if (player2.getName().toLowerCase() === "bot") {
+            console.log(player2.getName().toLowerCase());
+            setInitialBotMove();
         }
     }
 

@@ -63,6 +63,7 @@ btnReset.addEventListener("click", () => {
     for (let i = 0; i < uiBoard.length; i++) {
         uiBoard[i].textContent = "";
         uiBoard[i].style.background = "#ffffff";
+        uiBoard[i].style.color = "#1a1a1a";
     } 
     gameBoard.clearBoard();
 });
@@ -93,17 +94,17 @@ for (let i = 0; i < uiBoard.length; i++) {
         
             // if player won, change column to green
             if (col.length === 3) {
-                uiBoard[col[0]].style.background = "#4cff82";
-                uiBoard[col[1]].style.background = "#4cff82";
-                uiBoard[col[2]].style.background = "#4cff82";
-                replaceViews(resultContainer, playersContainer);
+                uiBoard[col[0]].style.color = "#d6007d";
+                uiBoard[col[1]].style.color = "#d6007d";
+                uiBoard[col[2]].style.color = "#d6007d";
+                resultContainer.classList.remove("hidden");
 
                 // Get last player in case the game is against bot
                 const lastPlayer = gameBoard.getLastPlayer();
                 resultContainer.children[0].textContent = `${lastPlayer.getName()} wins!`;
             }
             else if (gameBoard.getIsGameOver()) {
-                replaceViews(resultContainer, playersContainer);
+                resultContainer.classList.remove("hidden");
                 resultContainer.children[0].textContent = `It's a tie!`;
             } 
             

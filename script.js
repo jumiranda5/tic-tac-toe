@@ -13,25 +13,21 @@ const btnO = document.getElementById("btn-o");
 const btnReset = document.getElementById("btn-reset");
 
 btnPlayer2.addEventListener("click", () => {
-    console.log("Play against Player 2");
     replaceViews(settingsSymbol, settingsVs);
     gameBoard.setPlayersNames("Player 1", "Player 2");
 });
 
 btnBot.addEventListener("click", () => {
-    console.log("Play against bot");
     replaceViews(settingsSymbol, settingsVs);
     gameBoard.setPlayersNames("Player 1", "Bot");
 });
 
 btnX.addEventListener("click", () => {
-    console.log("Player 1 is X");
     replaceViews(boardContainer, settingsSymbol);
     gameBoard.setPlayersSymbols("X", "O");
 });
 
 btnO.addEventListener("click", () => {
-    console.log("Player 1 is O");
     replaceViews(boardContainer, settingsSymbol);
     gameBoard.setPlayersSymbols("O", "X");
     gameBoard.setInitialBotMove();
@@ -158,6 +154,90 @@ const Player = () => {
 };
 
 
+const bestMove = (() => {
+
+    let human;
+    let bot;
+
+    const getBestMove = (board, humanSymbol, aiSymbol) => {
+
+        human = humanSymbol;
+        bot = aiSymbol;
+
+        let bestScore = -Infinity;
+        let bestMove;
+
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === "") {
+                board[i] = bot;
+                let testMove = minimax(board, false);
+                board[i] = "";
+                console.log({testMove});
+                if (testMove > bestScore) {
+                    bestScore = testMove;
+                    bestMove = i;
+                }
+            }
+        }
+
+        return bestMove;
+
+    }
+
+    function checkWinner(board) {
+
+        if (!board.includes("")) return 0;
+
+        let winner;
+        if (board[0] !== "" && board[0] === board[1] && board[1] === board[2]) winner = board[0];
+        else if (board[3] !== "" && board[3] === board[4] && board[4] === board[5]) winner = board[3];
+        else if (board[6] !== "" && board[6] === board[7] && board[7] === board[8]) winner = board[6];
+        else if (board[0] !== "" && board[0] === board[3] && board[3] === board[6]) winner = board[0];
+        else if (board[1] !== "" && board[1] === board[4] && board[4] === board[7]) winner = board[1];
+        else if (board[2] !== "" && board[2] === board[5] && board[5] === board[8]) winner = board[2];
+        else if (board[0] !== "" && board[0] === board[4] && board[4] === board[8]) winner = board[0];
+        else if (board[6] !== "" && board[6] === board[4] && board[4] === board[2]) winner = board[6];
+
+        if (winner === bot) return 1;
+        else if (winner === human) return -1;
+        else return null;
+
+    }
+
+    function minimax(board, isMaximizing) {
+
+        let score = checkWinner(board);
+        if (score !== null) return score;
+
+        if (isMaximizing) {
+            let maxValue = -Infinity;
+            for (let i = 0; i < board.length; i++) {
+                if (board[i] === "") {
+                    board[i] = bot;
+                    maxValue = Math.max(maxValue, minimax(board, false));
+                    board[i] = "";
+                }
+            }
+            return maxValue;
+        }
+        else {
+            let minValue = Infinity;
+            for (let i = 0; i < board.length; i++) {
+                if (board[i] === "") {
+                    board[i] = human;
+                    minValue = Math.min(minValue, minimax(board, true));
+                    board[i] = "";
+                }
+            }
+            return minValue;
+        }
+    }
+
+    return { getBestMove }
+
+})();
+
+
 const gameBoard = (() => {
 
     const player1 = Player();
@@ -192,15 +272,8 @@ const gameBoard = (() => {
             secondPlayer = player1;
         }
 
-        console.log(`first player => ${firstPlayer.getName()}`);
-        console.log(`second player => ${secondPlayer.getName()}`);
-
-        console.log(`Move count = ${moveCount}`);
-
         if (moveCount === 0 || moveCount % 2 === 0) currentPlayer = firstPlayer;
         else currentPlayer = secondPlayer;
-
-        console.log(`Current player = ${currentPlayer.getName()}`);
 
         return currentPlayer;
     }
@@ -224,10 +297,13 @@ const gameBoard = (() => {
     // Bot
 
     const botMove = () => {
-        let available = availablePositions();
-        const position = Math.floor(Math.random() * available.length);
-        return available[position];
+        const botPosition = bestMove.getBestMove(board, player1.getSymbol(), player2.getSymbol());
+
+        console.log(`Bot move => ${botPosition}`);
+
+        return botPosition;
     }
+
 
     // board
 
@@ -240,6 +316,8 @@ const gameBoard = (() => {
         board[position] = player.getSymbol();
 
         const col = player.checkMoves();
+
+        console.log({col});
 
         if (col.length === 3 || moveCount > 8) isGameOver = true;
 
@@ -316,8 +394,3 @@ const gameBoard = (() => {
     }
 
 })();
-
-// If first player - X - is bot => init game
-// if (gameBoard.getCurrentPlayer().getName().toLowerCase() === "bot") {
-
-// }

@@ -172,7 +172,6 @@ const bestMove = (() => {
                 board[i] = bot;
                 let testMove = minimax(board, false);
                 board[i] = "";
-                console.log({testMove});
                 if (testMove > bestScore) {
                     bestScore = testMove;
                     bestMove = i;
@@ -294,17 +293,6 @@ const gameBoard = (() => {
         return lastPlayer;
     }
 
-    // Bot
-
-    const botMove = () => {
-        const botPosition = bestMove.getBestMove(board, player1.getSymbol(), player2.getSymbol());
-
-        console.log(`Bot move => ${botPosition}`);
-
-        return botPosition;
-    }
-
-
     // board
 
     const move = (player, position) => {
@@ -332,7 +320,7 @@ const gameBoard = (() => {
 
         // if player 2 is bot, make bot move
         else if (player === player1 && player2.getName().toLowerCase() === "bot") {
-            const botPosition = botMove();
+            const botPosition = bestMove.getBestMove(board, player1.getSymbol(), player2.getSymbol());
             uiBoard[botPosition].textContent = player2.getSymbol();
             const botCol = move(player2, botPosition);
             return botCol;

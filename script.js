@@ -436,9 +436,12 @@ const gameBoard = (() => {
         for (let i = 0; i < board.length; i++) {
             board[i] = "";
         }
-        if (player2.getName().toLowerCase() === "bot" && !isFinish) {
+        if (player2.getName().toLowerCase() === "bot" && 
+            player2.getSymbol().toLowerCase() === "x" && !isFinish) {
+            
             console.log(player2.getName().toLowerCase());
             setInitialBotMove();
+        
         }
     }
 

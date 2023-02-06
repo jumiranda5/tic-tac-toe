@@ -6,9 +6,12 @@
 const settingsVs = document.getElementById("settings-vs");
 const settingsSymbol = document.getElementById("settings-symbol");
 const boardContainer = document.getElementById("board-container");
-const playersContainer = document.getElementById("players");
 const resultContainer = document.getElementById("result");
 const uiBoard = document.getElementById("board").children;
+
+// Players
+const playerX = document.getElementById("player1");
+const playerO = document.getElementById("player2");
 
 // buttons
 const btnPlayer2 = document.getElementById("btn-player2");
@@ -34,11 +37,13 @@ btnBot.addEventListener("click", () => {
 
 btnX.addEventListener("click", () => {
     replaceViews(boardContainer, settingsSymbol);
+    setPlayersElement();
     gameBoard.setPlayersSymbols("X", "O");
 });
 
 btnO.addEventListener("click", () => {
     replaceViews(boardContainer, settingsSymbol);
+    setPlayersElement();
     gameBoard.setPlayersSymbols("O", "X");
     gameBoard.setInitialBotMove();
 });
@@ -48,8 +53,13 @@ const replaceViews = (toShow, toHide) => {
     toShow.classList.remove("hidden");
 };
 
+const setPlayersElement = () => {
+    playerX.textContent = `X -> ${gameBoard.getPlayers()[0].getName()}`;
+    playerO.textContent = `O -> ${gameBoard.getPlayers()[1].getName()}`;
+}
+
 btnReset.addEventListener("click", () => {
-    replaceViews(playersContainer, resultContainer);
+    resultContainer.classList.add("hidden");
     for (let i = 0; i < uiBoard.length; i++) {
         uiBoard[i].textContent = "";
         uiBoard[i].style.background = "#ffffff";
@@ -311,6 +321,10 @@ const gameBoard = (() => {
         return lastPlayer;
     }
 
+    const getPlayers = () => {
+        return [ player1, player2 ];
+    }
+
     // board
 
     const move = (player, position) => {
@@ -393,6 +407,7 @@ const gameBoard = (() => {
         setPlayersSymbols,
         getCurrentPlayer,
         getLastPlayer,
+        getPlayers,
         addMove,
         setInitialBotMove,
         availablePositions,

@@ -323,8 +323,6 @@ const gameBoard = (() => {
 
         const col = player.checkMoves();
 
-        console.log({col});
-
         if (col.length === 3 || moveCount > 8) isGameOver = true;
 
         return col;
@@ -350,7 +348,7 @@ const gameBoard = (() => {
 
     const setInitialBotMove = () => {
         // Init game if bot is X
-        const botPosition = botMove();
+        const botPosition = bestMove.getBestMove(board, player1.getSymbol(), player2.getSymbol());
         uiBoard[botPosition].textContent = player2.getSymbol();
         move(player2, botPosition);
     }

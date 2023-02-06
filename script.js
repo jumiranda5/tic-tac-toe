@@ -19,6 +19,7 @@ const btnBot = document.getElementById("btn-bot");
 const btnX = document.getElementById("btn-x");
 const btnO = document.getElementById("btn-o");
 const btnReset = document.getElementById("btn-reset");
+const btnFinish = document.getElementById("btn-finish");
 
 
 /* =======================================================
@@ -48,6 +49,15 @@ btnO.addEventListener("click", () => {
     setPlayersElement();
 });
 
+btnReset.addEventListener("click", () => {
+    clear(false);
+});
+
+btnFinish.addEventListener("click", () => {
+    clear(true);
+    replaceViews(settingsVs, boardContainer);
+});
+
 const replaceViews = (toShow, toHide) => {
     toHide.classList.add("hidden");
     toShow.classList.remove("hidden");
@@ -70,15 +80,15 @@ const setPlayersElement = () => {
     playerO.textContent = `O -> ${second}`;
 }
 
-btnReset.addEventListener("click", () => {
+const clear = (isFinish) => {
     resultContainer.classList.add("hidden");
     for (let i = 0; i < uiBoard.length; i++) {
         uiBoard[i].textContent = "";
         uiBoard[i].style.background = "#ffffff";
         uiBoard[i].style.color = "#1a1a1a";
     } 
-    gameBoard.clearBoard();
-});
+    gameBoard.clearBoard(isFinish);
+}
 
 
 /* =======================================================
@@ -401,7 +411,7 @@ const gameBoard = (() => {
 
     // Clear
     
-    const clearBoard = () => {
+    const clearBoard = (isFinish) => {
         moveCount = 0;
         isGameOver = false;
         player1.resetMoves();
@@ -409,7 +419,7 @@ const gameBoard = (() => {
         for (let i = 0; i < board.length; i++) {
             board[i] = "";
         }
-        if (player2.getName().toLowerCase() === "bot") {
+        if (player2.getName().toLowerCase() === "bot" && !isFinish) {
             console.log(player2.getName().toLowerCase());
             setInitialBotMove();
         }

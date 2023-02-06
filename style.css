@@ -20,6 +20,7 @@ body {
 }
 
 /* BUTTONS */
+
 button {
     font-family: 'Londrina Solid', cursive;
     cursor: pointer;
@@ -27,17 +28,26 @@ button {
     border-radius: 0.5rem;
     height: 2.75rem;
     font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    background: none;
 }
 
 .main-button {
-    padding: 0 24px;
-    background-color: var(--main-color);
-    color: var(--main-color-light);
-    font-weight: 300;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 8px 24px;
+    border: 3px solid var(--main-color);
+    color: var(--main-color);
 }
 
-.main-button:hover {
-    background-color: #353535;
+.main-button:hover,
+.main-button:focus {
+    background: var(--main-color);
+    color: var(--main-color-light);
+    font-weight: 300;
 }
 
 /* HEADER */
@@ -52,41 +62,48 @@ button {
 
 .main {
     padding: 0 8vw 80px;
-    text-align: center;
 }
 
 /* PLAYERS - RESULT */
 
-.players,
+.players-info,
 .result {
     display: flex;
     flex-flow: row wrap;
-    font-size: 1.3rem;
-    border-radius: 0.5rem;
-}
-
-.players {
-    padding: 16px 0;
-    justify-content: center;
-    gap: 24px;
-    background-color: var(--light-grey);
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 8px  8px 16px;
 }
 
 .result {
-    padding: 8px;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #4cff82;
+    margin: 0 0 60px;
+    background-color: #4cff82a8;
+    border-radius: 0.5rem;
 }
 
-.result > p {
-    padding-left: 16px;
+.result > .main-button {
+    border: none;
+    background: #0b914c;
+    color: white;
+    font-weight: 300;
 }
+
+.result > .main-button:hover,
+.result > .main-button:focus {
+    background: #086837;
+}
+
+.players > p,
+.result > p {
+    padding: 2px 0;
+    font-size: 1.3rem;
+}
+
 
 /* BOARD */
 
 .board {
-    margin: 40px 8px;
+    margin: 20px 16px 40px;
     display: grid;
     gap: 8px;
     grid-template-columns: repeat(3, 1fr);
@@ -102,13 +119,6 @@ button {
     align-items: center;
     background-color: white;
     font-size: 16vw;
-}
-
-/* RESET */
-
-.reset-button {
-    margin: 16px;
-
 }
 
 /* SETTINGS */ 
@@ -136,23 +146,6 @@ button {
     margin-top: 1.5rem;
 }
 
-.button-container > button {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.25rem;
-    border: 2px solid var(--main-color);
-    color: var(--main-color);
-}
-
-.button-container > button:hover,
-.button-container > button:focus {
-    background: var(--main-color);
-    color: var(--main-color-light);
-    font-weight: 300;
-}
-
 .material-symbols-outlined {
     font-size: 1.5rem;
 }
@@ -178,15 +171,15 @@ button {
         margin: 0 auto;
     }
 
-    .players,
-    .result {
-        margin: 24px 0;
-        gap: 40px;
+    .players > p,
+    .result > p {
+        padding: 4px 0;
         font-size: 1.75rem;
     }
 
+
     .board {
-        margin: 84px 0;
+        margin: 40px 0 60px;
         gap: 10px;
     }
     

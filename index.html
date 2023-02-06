@@ -23,8 +23,8 @@
         <p class="settings-text">vs</p>
 
         <div class="button-container">
-            <button id="btn-player2" type="button">Player 2</button>
-            <button id="btn-bot" type="button">
+            <button class="main-button" id="btn-player2" type="button">Player 2</button>
+            <button class="main-button" id="btn-bot" type="button">
                 <span class="material-symbols-outlined">smart_toy</span>
                 Bot</button>
         </div>
@@ -34,21 +34,16 @@
         <p class="settings-text">Player 1:</p>
 
         <div class="button-container">
-            <button id="btn-x" type="button">X</button>
-            <button id="btn-o" type="button">O</button>
+            <button class="main-button" id="btn-x" type="button">X</button>
+            <button class="main-button" id="btn-o" type="button">O</button>
         </div>
     </div>
 
     <main class="main hidden" id="board-container">
-        
-        <div id="players" class="players">
-            <p id="player1">X -> Player 1</p>
-            <p id="player2">O -> Player 2</p>
-        </div>
 
         <div id="result" class="result hidden">
             <p>Player x wins!</p>
-            <button type="button" class="main-button">Close</button>
+            <button type="button" class="main-button">Finish</button>
         </div>
 
         <div id="board" class="board">
@@ -63,7 +58,13 @@
             <div></div>
         </div>
 
-        <button id="btn-reset" type="reset" class="main-button reset-button">Restart</button>
+        <div class="players-info">
+            <div id="players" class="players">
+                <p id="player1">X -> Player 1</p>
+                <p id="player2">O -> Player 2</p>
+            </div>
+            <button id="btn-reset" type="reset" class="main-button reset-button">Restart</button>
+        </div>
 
     </main>
     

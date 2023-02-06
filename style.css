@@ -7,7 +7,7 @@
     font-size: 16px;
     --main-color: #1a1a1a;
     --main-color-light: #ffffffe8;
-    --light-grey: #ededed
+    --light-grey: #ededed;
 }
 
 span {
@@ -150,11 +150,6 @@ button {
     font-size: 1.5rem;
 }
 
-/* HIDDEN */
-
-.hidden {
-    display: none;
-}
 
 /* MEDIA QUERIES */
 
@@ -197,4 +192,48 @@ button {
         margin: 40px auto;
     }
     
+}
+
+/* HIDDEN AND ANIMATIONS */
+
+.winner-col {
+    color: #7b1cc8;
+}
+
+.hidden {
+    display: none;
+}
+
+.enter-animation {
+    animation: enter 0.4s cubic-bezier(.2,.34,.53,1.47);
+}
+
+.enter-animation-bot {
+    animation: enter-bot 0.8s cubic-bezier(.2,.34,.53,1.47);
+}
+
+@keyframes enter {
+    0% { 
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes enter-bot {
+    0% { 
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% { 
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
 }

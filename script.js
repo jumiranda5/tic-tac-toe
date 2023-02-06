@@ -28,11 +28,13 @@ const btnFinish = document.getElementById("btn-finish");
 
 btnPlayer2.addEventListener("click", () => {
     replaceViews(settingsSymbol, settingsVs);
+    settingsSymbol.classList.add("enter-animation");
     gameBoard.setPlayersNames("Player 1", "Player 2");
 });
 
 btnBot.addEventListener("click", () => {
     replaceViews(settingsSymbol, settingsVs);
+    settingsSymbol.classList.add("enter-animation");
     gameBoard.setPlayersNames("Player 1", "Bot");
 });
 
@@ -55,6 +57,7 @@ btnReset.addEventListener("click", () => {
 
 btnFinish.addEventListener("click", () => {
     clear(true);
+    settingsSymbol.classList.remove("enter-animation");
     replaceViews(settingsVs, boardContainer);
 });
 
@@ -83,9 +86,12 @@ const setPlayersElement = () => {
 const clear = (isFinish) => {
     resultContainer.classList.add("hidden");
     for (let i = 0; i < uiBoard.length; i++) {
-        uiBoard[i].textContent = "";
+        uiBoard[i].children[0].textContent = "";
         uiBoard[i].style.background = "#ffffff";
-        uiBoard[i].style.color = "#1a1a1a";
+        uiBoard[i].classList.remove("winner-col");
+        uiBoard[i].children[0].classList.remove("enter-animation");
+        uiBoard[i].children[0].classList.remove("enter-animation-bot");
+        resultContainer.classList.remove("enter-animation");
     } 
     gameBoard.clearBoard(isFinish);
 }
@@ -111,23 +117,32 @@ for (let i = 0; i < uiBoard.length; i++) {
         
             // Add move and check if player won
             const currentPlayer = gameBoard.getCurrentPlayer();
-            uiBoard[i].textContent = currentPlayer.getSymbol();
+            uiBoard[i].children[0].textContent = currentPlayer.getSymbol();
+            uiBoard[i].children[0].classList.add("enter-animation");
             const col = gameBoard.addMove(currentPlayer, i);
         
-            // if player won, change column to green
+            // if player won, change column color
             if (col.length === 3) {
-                uiBoard[col[0]].style.color = "#d6007d";
-                uiBoard[col[1]].style.color = "#d6007d";
-                uiBoard[col[2]].style.color = "#d6007d";
-                resultContainer.classList.remove("hidden");
+                setTimeout(() => {
+                    uiBoard[col[0]].classList.add("winner-col");
+                    uiBoard[col[1]].classList.add("winner-col");
+                    uiBoard[col[2]].classList.add("winner-col");
+                }, 400);
 
                 // Get last player in case the game is against bot
                 const lastPlayer = gameBoard.getLastPlayer();
-                resultContainer.children[0].textContent = `${lastPlayer.getName()} wins!`;
+                setTimeout(() => {
+                    resultContainer.classList.remove("hidden");
+                    resultContainer.classList.add("enter-animation");
+                    resultContainer.children[0].textContent = `${lastPlayer.getName()} wins!`;
+                }, 400);
             }
             else if (gameBoard.getIsGameOver()) {
-                resultContainer.classList.remove("hidden");
-                resultContainer.children[0].textContent = `It's a tie!`;
+                setTimeout(() => {
+                    resultContainer.classList.remove("hidden");
+                    resultContainer.classList.add("enter-animation");
+                    resultContainer.children[0].textContent = `It's a tie!`;
+                }, 400);
             } 
             
         }
@@ -374,7 +389,8 @@ const gameBoard = (() => {
         // if player 2 is bot, make bot move
         else if (player === player1 && player2.getName().toLowerCase() === "bot") {
             const botPosition = bestMove.getBestMove(board, player1.getSymbol(), player2.getSymbol());
-            uiBoard[botPosition].textContent = player2.getSymbol();
+            uiBoard[botPosition].children[0].classList.add("enter-animation-bot");
+            uiBoard[botPosition].children[0].textContent = player2.getSymbol();
             const botCol = move(player2, botPosition);
             return botCol;
         }
@@ -386,7 +402,8 @@ const gameBoard = (() => {
     const setInitialBotMove = () => {
         // Init game if bot is X
         const botPosition = bestMove.getBestMove(board, player1.getSymbol(), player2.getSymbol());
-        uiBoard[botPosition].textContent = player2.getSymbol();
+        uiBoard[botPosition].children[0].classList.add("enter-animation");
+        uiBoard[botPosition].children[0].textContent = player2.getSymbol();
         move(player2, botPosition);
     }
 

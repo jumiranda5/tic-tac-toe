@@ -37,15 +37,15 @@ btnBot.addEventListener("click", () => {
 
 btnX.addEventListener("click", () => {
     replaceViews(boardContainer, settingsSymbol);
-    setPlayersElement();
     gameBoard.setPlayersSymbols("X", "O");
+    setPlayersElement();
 });
 
 btnO.addEventListener("click", () => {
     replaceViews(boardContainer, settingsSymbol);
-    setPlayersElement();
     gameBoard.setPlayersSymbols("O", "X");
     gameBoard.setInitialBotMove();
+    setPlayersElement();
 });
 
 const replaceViews = (toShow, toHide) => {
@@ -54,8 +54,20 @@ const replaceViews = (toShow, toHide) => {
 };
 
 const setPlayersElement = () => {
-    playerX.textContent = `X -> ${gameBoard.getPlayers()[0].getName()}`;
-    playerO.textContent = `O -> ${gameBoard.getPlayers()[1].getName()}`;
+    let first;
+    let second;
+    
+    if (gameBoard.getPlayers()[0].getSymbol() === "X") {
+        first = gameBoard.getPlayers()[0].getName();
+        second = gameBoard.getPlayers()[1].getName();
+    }
+    else {
+        first = gameBoard.getPlayers()[1].getName();
+        second = gameBoard.getPlayers()[0].getName();
+    }
+
+    playerX.textContent = `X -> ${first}`;
+    playerO.textContent = `O -> ${second}`;
 }
 
 btnReset.addEventListener("click", () => {
